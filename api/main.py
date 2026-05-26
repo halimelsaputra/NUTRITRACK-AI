@@ -83,7 +83,7 @@ TARGET_LABELS = {
 # Saran statis sebagai fallback kalau Gemini gagal/limit
 STATIC_ADVICE = {
     'Insufficient_Weight': """**Pola Makan**
-• Tambah asupan kalori 300–500 kkal/hari dari sumber sehat
+•   Tambah asupan kalori 300–500 kkal/hari dari sumber sehat
 • Perbanyak protein: telur, ayam, ikan, kacang-kacangan
 • Konsumsi karbohidrat kompleks: nasi merah, oat, ubi
 
@@ -221,6 +221,7 @@ except Exception as e:
 # SETUP GEMINI
 # ============================================================
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 if GEMINI_API_KEY:
     try:
         gemini_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -335,14 +336,14 @@ Jangan ulangi hasil klasifikasi. Fokus pada saran praktis yang bisa langsung dil
 """
         try:
             response = gemini_client.models.generate_content(
-                model="gemini-2.0-flash",
+                model=GEMINI_MODEL,
                 contents=prompt
             )
             return {
                 "advice" : response.text,
                 "source" : "gemini"
             }
-        except Exception:
+        except Exception as exc:
             pass  # Lanjut ke fallback
 
     # Fallback ke saran statis
